@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hSVMS Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text-main);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* ── Layout ── */
+    .shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 56px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: var(--color-fill-components);
+      border-bottom: 1px solid var(--color-outlines);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--color-brand-fill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo svg { display: block; }
+
+    .header-name {
+      font-size: var(--font-size-body3);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-main);
+      letter-spacing: 0.5px;
+    }
+
+    .header-badge {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--color-brand-content);
+      background: var(--color-brand-fill-activated);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--color-fill-accent);
+      border: 1px solid var(--color-outlines);
+      border-radius: 24px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .theme-btn {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: var(--font-family);
+      font-weight: var(--font-weight-medium);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--color-text-secondary);
+      background: transparent;
+    }
+
+    .theme-btn.active {
+      background: var(--color-fill-components);
+      color: var(--color-text-main);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--color-fill-components);
+      border-right: 1px solid var(--color-outlines);
+      padding: 20px 0;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 0 20px;
+      margin-bottom: 4px;
+      margin-top: 20px;
+    }
+
+    .nav-label:first-child { margin-top: 0; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      font-weight: var(--font-weight-regular);
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.12s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text-main);
+      background: var(--color-fill-accent);
+    }
+
+    .nav-link.active {
+      color: var(--color-brand-content);
+      border-left-color: var(--color-brand-fill);
+      background: var(--color-brand-fill-activated);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--color-outlines);
+      margin: 12px 20px;
+    }
+
+    /* ── Main ── */
+    .main {
+      padding: 48px 56px;
+      max-width: 960px;
+      overflow-y: auto;
+    }
+
+    /* ── Section ── */
+    .section { margin-bottom: 72px; }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--color-outlines);
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      font-size: var(--font-size-head2);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-main);
+      letter-spacing: 1px;
+      line-height: 150%;
+    }
+
+    .section-meta {
+      font-size: var(--font-size-body4);
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+      line-height: 170%;
+    }
+
+    .section-count {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      background: var(--color-fill-accent);
+      border: 1px solid var(--color-outlines);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── Typography Table ── */
+    .type-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--color-outlines);
+    }
+
+    .type-table thead tr {
+      background: var(--color-fill-accent);
+    }
+
+    .type-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--color-outlines);
+      white-space: nowrap;
+    }
+
+    .type-row {
+      border-bottom: 1px solid var(--color-outlines);
+      transition: background 0.1s;
+    }
+
+    .type-row:last-child { border-bottom: none; }
+
+    .type-row:hover { background: var(--color-surface); }
+
+    .type-row td { vertical-align: middle; }
+
+    .cell-name {
+      padding: 18px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-main);
+      white-space: nowrap;
+      font-family: 'Courier New', monospace;
+    }
+
+    .cell-preview {
+      padding: 18px 16px;
+      color: var(--color-text-main);
+    }
+
+    .cell-meta {
+      padding: 18px 16px;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+
+    .cell-use {
+      padding: 18px 16px;
+    }
+
+    .use-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--color-brand-fill-activated);
+      color: var(--color-brand-content);
+      white-space: nowrap;
+    }
+
+    /* ── Color Groups ── */
+    .color-group { margin-bottom: 40px; }
+
+    .color-group-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-group-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-outlines);
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+      gap: 10px;
+    }
+
+    .color-card {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--color-outlines);
+      background: var(--color-fill-components);
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: default;
+    }
+
+    .color-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    .color-swatch-wrap {
+      height: 60px;
+      display: flex;
+    }
+
+    .swatch-half {
+      flex: 1;
+      position: relative;
+    }
+
+    .swatch-mode {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      opacity: 0.55;
+      white-space: nowrap;
+    }
+
+    .color-info {
+      padding: 10px 12px;
+    }
+
+    .color-token {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .hex-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .hex-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      border: 1px solid var(--color-outlines);
+      flex-shrink: 0;
+    }
+
+    .hex-val {
+      font-size: 10px;
+      color: var(--color-text-secondary);
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1" fill="white" opacity="0.9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1" fill="white" opacity="0.6"/>
+          <rect x="2" y="9" width="5" height="5" rx="1" fill="white" opacity="0.6"/>
+          <rect x="9" y="9" width="5" height="5" rx="1" fill="white" opacity="0.3"/>
+        </svg>
+      </div>
+      <span class="header-name">hSVMS Design System</span>
+      <span class="header-badge">v1.0</span>
+    </div>
+
+    <div class="theme-toggle">
+      <button class="theme-btn active" onclick="setTheme('light', this)">☀ Light</button>
+      <button class="theme-btn"       onclick="setTheme('dark',  this)">◑ Dark</button>
+    </div>
+  </header>
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="nav-label">Tokens</div>
+    <a class="nav-link active" href="#typography">
+      <span class="nav-dot" style="background: var(--color-brand-fill)"></span>
+      Typography
+    </a>
+    <a class="nav-link" href="#colors">
+      <span class="nav-dot" style="background: var(--color-success-on-fill)"></span>
+      Colors
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-label">Colors</div>
+    <a class="nav-link" href="#color-default">Default 基礎</a>
+    <a class="nav-link" href="#color-brand">Brand 品牌</a>
+    <a class="nav-link" href="#color-status">Status 狀態</a>
+  </nav>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- Typography -->
+    <section class="section" id="typography">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Typography</div>
+          <div class="section-meta">Noto Sans TC（思源黑體）· 中文 / EN · 15 種字級</div>
+        </div>
+        <span class="section-count">15 styles</span>
+      </div>
+
+      <table class="type-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th style="width:40%">預覽</th>
+            <th>Size</th>
+            <th>Weight</th>
+            <th>Line H.</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody id="type-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- Colors -->
+    <section class="section" id="colors">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Colors</div>
+          <div class="section-meta">Light · Dark 雙模式 · 每個色票左半=Light，右半=Dark</div>
+        </div>
+        <span class="section-count">29 tokens</span>
+      </div>
+
+      <div id="color-sections"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  /* ── Theme Toggle ── */
+  function setTheme(theme, btn) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ── Typography Data ── */
+  const typeStyles = [
+    { token: 'head1-bold',    size: '32px', weight: '700', lh: '150%', ls: '1px',   use: '大標題',    preview: '大標題 Heading' },
+    { token: 'head2-bold',    size: '22px', weight: '700', lh: '150%', ls: '1px',   use: '標題',      preview: '標題 Heading' },
+    { token: 'head2-medium',  size: '22px', weight: '500', lh: '150%', ls: '1px',   use: '',          preview: '標題 Heading' },
+    { token: 'head2-regular', size: '22px', weight: '400', lh: '150%', ls: '1px',   use: '',          preview: '標題 Heading' },
+    { token: 'body1-bold',    size: '18px', weight: '700', lh: '150%', ls: '1px',   use: '區域標籤',  preview: '區域標籤 Label' },
+    { token: 'body1-medium',  size: '18px', weight: '500', lh: '150%', ls: '1px',   use: '',          preview: '區域標籤 Label' },
+    { token: 'body1-regular', size: '18px', weight: '400', lh: '150%', ls: '1px',   use: '',          preview: '區域標籤 Label' },
+    { token: 'body2-bold',    size: '16px', weight: '700', lh: '170%', ls: '1px',   use: '常規文字',  preview: '常規文字 Body text' },
+    { token: 'body2-regular', size: '16px', weight: '400', lh: '170%', ls: '1px',   use: '',          preview: '常規文字 Body text' },
+    { token: 'body3-bold',    size: '14px', weight: '700', lh: '170%', ls: '1px',   use: '元件標籤',  preview: '元件標籤 Component' },
+    { token: 'body3-regular', size: '14px', weight: '400', lh: '170%', ls: '1px',   use: '',          preview: '元件標籤 Component' },
+    { token: 'body4-bold',    size: '12px', weight: '700', lh: '170%', ls: '1px',   use: '說明文字',  preview: '說明文字 Caption' },
+    { token: 'body4-regular', size: '12px', weight: '400', lh: '170%', ls: '1px',   use: '',          preview: '說明文字 Caption' },
+    { token: 'body5-bold',    size: '10px', weight: '700', lh: '180%', ls: '1.5px', use: 'Micro',     preview: 'Micro text 極小文字' },
+    { token: 'body5-regular', size: '10px', weight: '400', lh: '180%', ls: '1.5px', use: '',          preview: 'Micro text 極小文字' },
+  ];
+
+  const tbody = document.getElementById('type-tbody');
+  typeStyles.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.className = 'type-row';
+    tr.innerHTML = `
+      <td class="cell-name">t-${s.token}</td>
+      <td class="cell-preview">
+        <span class="t-${s.token}">${s.preview}</span>
+      </td>
+      <td class="cell-meta">${s.size}</td>
+      <td class="cell-meta">${s.weight}</td>
+      <td class="cell-meta">${s.lh}</td>
+      <td class="cell-use">${s.use ? `<span class="use-tag">${s.use}</span>` : '—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  /* ── Color Data ── */
+  const colorGroups = [
+    {
+      id: 'color-default',
+      title: 'Default · 基礎色',
+      tokens: [
+        { label: 'Text Main',        light: '#080808', dark: '#f9f9f9' },
+        { label: 'Text Secondary',   light: '#727272', dark: '#999999' },
+        { label: 'Text Placeholder', light: '#adadad', dark: '#727272' },
+        { label: 'Text Invert',      light: '#f9f9f9', dark: '#f9f9f9' },
+        { label: 'Background',       light: '#ededed', dark: '#191919' },
+        { label: 'Surface',          light: '#f7f7f7', dark: '#262626' },
+        { label: 'Fill Components',  light: '#ffffff',  dark: '#2d2d2d' },
+        { label: 'Fill Accent',      light: '#ededed', dark: '#383838' },
+        { label: 'Fill Panel',       light: '#c5c5c5', dark: '#474747' },
+        { label: 'Fill Disable',     light: '#e3e3e3', dark: '#3f3f3f' },
+        { label: 'On Fill Disable',  light: '#999999', dark: '#727272' },
+        { label: 'On Fill Icons',    light: '#3d3d3d', dark: '#f9f9f9' },
+        { label: 'Outlines',         light: '#dddddd', dark: '#3f3f3f' },
+      ]
+    },
+    {
+      id: 'color-brand',
+      title: 'Brand · 品牌色',
+      tokens: [
+        { label: 'Brand Fill',           light: '#1c4072', dark: '#268cd8' },
+        { label: 'Brand Fill Hovered',   light: '#336ab6', dark: '#268dd9' },
+        { label: 'Brand Fill Activated', light: '#edf3fd', dark: '#364046' },
+        { label: 'Brand On Fill Main',   light: '#1d4072', dark: '#67bdfd' },
+        { label: 'Brand Accent',         light: '#0075cc', dark: '#67bdfd' },
+        { label: 'Brand Content',        light: '#336ab6', dark: '#67bdfd' },
+      ]
+    },
+    {
+      id: 'color-status',
+      title: 'Status · 狀態色',
+      tokens: [
+        { label: 'Success Fill',        light: '#e0f2e8', dark: '#364942' },
+        { label: 'Success On Fill',     light: '#0eab72', dark: '#6adea1' },
+        { label: 'Exceed Fill',         light: '#fce7c6', dark: '#6c4e20' },
+        { label: 'Exceed On Fill',      light: '#e08600', dark: '#f7bd66' },
+        { label: 'Far Exceed Fill',     light: '#f9e5e5', dark: '#651e1e' },
+        { label: 'Far Exceed On Fill',  light: '#c43030', dark: '#fb8289' },
+        { label: 'Warning Fill',        light: '#f2efb3', dark: '#666808' },
+        { label: 'Warning On Fill',     light: '#b2aa10', dark: '#f2f483' },
+      ]
+    }
+  ];
+
+  const colorSections = document.getElementById('color-sections');
+
+  colorGroups.forEach(group => {
+    const section = document.createElement('div');
+    section.className = 'color-group';
+    section.id = group.id;
+
+    const title = document.createElement('div');
+    title.className = 'color-group-title';
+    title.textContent = group.title;
+    section.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'color-grid';
+
+    group.tokens.forEach(token => {
+      const card = document.createElement('div');
+      card.className = 'color-card';
+
+      const lightText = isLight(token.light) ? '#00000066' : '#ffffff88';
+      const darkText  = isLight(token.dark)  ? '#00000066' : '#ffffff88';
+
+      card.innerHTML = `
+        <div class="color-swatch-wrap">
+          <div class="swatch-half" style="background:${token.light}">
+            <span class="swatch-mode" style="color:${lightText}">LIGHT</span>
+          </div>
+          <div class="swatch-half" style="background:${token.dark}">
+            <span class="swatch-mode" style="color:${darkText}">DARK</span>
+          </div>
+        </div>
+        <div class="color-info">
+          <div class="color-token">${token.label}</div>
+          <div class="hex-row">
+            <div class="hex-dot" style="background:${token.light}"></div>
+            <span class="hex-val">${token.light}</span>
+          </div>
+          <div class="hex-row">
+            <div class="hex-dot" style="background:${token.dark}; border-color:#88888844"></div>
+            <span class="hex-val">${token.dark}</span>
+          </div>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    colorSections.appendChild(section);
+  });
+
+  /* ── Utility: detect light color ── */
+  function isLight(hex) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.slice(0,2),16);
+    const g = parseInt(h.slice(2,4),16);
+    const b = parseInt(h.slice(4,6),16);
+    return (r*299 + g*587 + b*114) / 1000 > 128;
+  }
+
+  /* ── Active nav on scroll ── */
+  const sections = document.querySelectorAll('.section, .color-group');
+  const navLinks = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+</script>
+
+</body>
+</html>

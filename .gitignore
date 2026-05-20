@@ -1,0 +1,16 @@
+# Local config / tooling
+.claude/
+.mcp.json
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# Logs / env
+*.log
+.env
+.env.local

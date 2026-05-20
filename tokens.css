@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+/* ═══════════════════════════════════════
+   hSVMS Design Tokens
+   ═══════════════════════════════════════ */
+
+:root,
+[data-theme="light"] {
+
+  /* ── Font Family ── */
+  --font-family: 'Noto Sans TC', 'Noto Sans', sans-serif;
+
+  /* ── Font Size ── */
+  --font-size-head1: 32px;
+  --font-size-head2: 22px;
+  --font-size-body1: 18px;
+  --font-size-body2: 16px;
+  --font-size-body3: 14px;
+  --font-size-body4: 12px;
+  --font-size-body5: 10px;
+
+  /* ── Font Weight ── */
+  --font-weight-bold:    700;
+  --font-weight-medium:  500;
+  --font-weight-regular: 400;
+
+  /* ── Line Height ── */
+  --line-height-compact: 150%;
+  --line-height-normal:  170%;
+  --line-height-loose:   180%;
+
+  /* ── Letter Spacing ── */
+  --letter-spacing-default: 1px;
+  --letter-spacing-loose:   1.5px;
+
+  /* ── Colors · Default ── */
+  --color-text-main:         #080808;
+  --color-text-secondary:    #727272;
+  --color-text-placeholder:  #adadad;
+  --color-text-invert:       #f9f9f9;
+
+  --color-bg:                #ededed;
+  --color-surface:           #f7f7f7;
+  --color-fill-components:   #ffffff;
+  --color-fill-accent:       #ededed;
+  --color-fill-panel:        #c5c5c5;
+  --color-fill-disable:      #e3e3e3;
+  --color-on-fill-disable:   #999999;
+  --color-on-fill-icons:     #3d3d3d;
+  --color-outlines:          #dddddd;
+
+  /* ── Colors · Brand ── */
+  --color-brand-fill:           #1c4072;
+  --color-brand-fill-hovered:   #336ab6;
+  --color-brand-fill-activated: #edf3fd;
+  --color-brand-on-fill-main:   #1d4072;
+  --color-brand-accent:         #0075cc;
+  --color-brand-content:        #336ab6;
+
+  /* ── Colors · Status · Success ── */
+  --color-success-fill:    #e0f2e8;
+  --color-success-on-fill: #0eab72;
+
+  /* ── Colors · Status · Exceed ── */
+  --color-exceed-fill:    #fce7c6;
+  --color-exceed-on-fill: #e08600;
+
+  /* ── Colors · Status · Far Exceed ── */
+  --color-far-exceed-fill:    #f9e5e5;
+  --color-far-exceed-on-fill: #c43030;
+
+  /* ── Colors · Status · Warning ── */
+  --color-warning-fill:    #f2efb3;
+  --color-warning-on-fill: #b2aa10;
+}
+
+/* ── Dark Mode ── */
+[data-theme="dark"] {
+
+  --color-text-main:         #f9f9f9;
+  --color-text-secondary:    #999999;
+  --color-text-placeholder:  #727272;
+  --color-text-invert:       #f9f9f9;
+
+  --color-bg:                #191919;
+  --color-surface:           #262626;
+  --color-fill-components:   #2d2d2d;
+  --color-fill-accent:       #383838;
+  --color-fill-panel:        #474747;
+  --color-fill-disable:      #3f3f3f;
+  --color-on-fill-disable:   #727272;
+  --color-on-fill-icons:     #f9f9f9;
+  --color-outlines:          #3f3f3f;
+
+  --color-brand-fill:           #268cd8;
+  --color-brand-fill-hovered:   #268dd9;
+  --color-brand-fill-activated: #364046;
+  --color-brand-on-fill-main:   #67bdfd;
+  --color-brand-accent:         #67bdfd;
+  --color-brand-content:        #67bdfd;
+
+  --color-success-fill:    #364942;
+  --color-success-on-fill: #6adea1;
+
+  --color-exceed-fill:    #6c4e20;
+  --color-exceed-on-fill: #f7bd66;
+
+  --color-far-exceed-fill:    #651e1e;
+  --color-far-exceed-on-fill: #fb8289;
+
+  --color-warning-fill:    #666808;
+  --color-warning-on-fill: #f2f483;
+}
+
+/* ═══════════════════════════════════════
+   Typography Utility Classes
+   ═══════════════════════════════════════ */
+
+.t-head1-bold    { font-family: var(--font-family); font-size: 32px; font-weight: 700; letter-spacing: 1px; line-height: 150%; }
+.t-head2-bold    { font-family: var(--font-family); font-size: 22px; font-weight: 700; letter-spacing: 1px; line-height: 150%; }
+.t-head2-medium  { font-family: var(--font-family); font-size: 22px; font-weight: 500; letter-spacing: 1px; line-height: 150%; }
+.t-head2-regular { font-family: var(--font-family); font-size: 22px; font-weight: 400; letter-spacing: 1px; line-height: 150%; }
+.t-body1-bold    { font-family: var(--font-family); font-size: 18px; font-weight: 700; letter-spacing: 1px; line-height: 150%; }
+.t-body1-medium  { font-family: var(--font-family); font-size: 18px; font-weight: 500; letter-spacing: 1px; line-height: 150%; }
+.t-body1-regular { font-family: var(--font-family); font-size: 18px; font-weight: 400; letter-spacing: 1px; line-height: 150%; }
+.t-body2-bold    { font-family: var(--font-family); font-size: 16px; font-weight: 700; letter-spacing: 1px; line-height: 170%; }
+.t-body2-regular { font-family: var(--font-family); font-size: 16px; font-weight: 400; letter-spacing: 1px; line-height: 170%; }
+.t-body3-bold    { font-family: var(--font-family); font-size: 14px; font-weight: 700; letter-spacing: 1px; line-height: 170%; }
+.t-body3-regular { font-family: var(--font-family); font-size: 14px; font-weight: 400; letter-spacing: 1px; line-height: 170%; }
+.t-body4-bold    { font-family: var(--font-family); font-size: 12px; font-weight: 700; letter-spacing: 1px; line-height: 170%; }
+.t-body4-regular { font-family: var(--font-family); font-size: 12px; font-weight: 400; letter-spacing: 1px; line-height: 170%; }
+.t-body5-bold    { font-family: var(--font-family); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; line-height: 180%; }
+.t-body5-regular { font-family: var(--font-family); font-size: 10px; font-weight: 400; letter-spacing: 1.5px; line-height: 180%; }
