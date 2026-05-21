@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>儀錶板 · 文字試調 (可拖曳)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* ── Mode toggle ── */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1840px;
+      margin: 0 auto 16px;
+      padding: 8px 4px;
+    }
+    .toolbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: 1px;
+    }
+    .toolbar-title span { color: var(--color-brand-content); }
+    .theme-toggle {
+      display: flex; gap: 2px;
+      background: var(--color-fill-accent);
+      border: 1px solid var(--color-outlines);
+      border-radius: 24px; padding: 3px;
+    }
+    .theme-btn {
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 12px; font-family: var(--font-family); font-weight: 500;
+      border: none; cursor: pointer; color: var(--color-text-secondary);
+      background: transparent; transition: all 0.15s;
+    }
+    .theme-btn.active {
+      background: var(--color-fill-components);
+      color: var(--color-text-main);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+
+    /* ── Dashboard 3-column grid ── */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      max-width: 1840px;
+      margin: 0 auto;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100px;
+    }
+
+    /* ── Section card ── */
+    .section {
+      background: var(--color-fill-components);
+      border: 1px solid var(--color-outlines);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .section.is-dragging {
+      opacity: 0.4;
+    }
+    .section:not(.is-dragging):hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      cursor: grab;
+      user-select: none;
+      border-bottom: 1px solid var(--color-outlines);
+      background: var(--color-surface);
+    }
+    .section-header:active { cursor: grabbing; }
+
+    .drag-handle {
+      color: var(--color-text-placeholder);
+      font-size: 14px;
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      letter-spacing: 1px;
+      flex: 1;
+    }
+    .section-title-icon {
+      color: var(--color-brand-content);
+      margin-right: 4px;
+    }
+
+    /* ── Card grids ── */
+    .card-grid {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+    .card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .card-grid.cols-6 { grid-template-columns: repeat(3, 1fr); }
+
+    /* ── Stat card ── */
+    .stat-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-outlines);
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: grab;
+      transition: transform 0.1s, border-color 0.15s;
+      user-select: none;
+    }
+    .stat-card:hover {
+      border-color: var(--color-brand-content);
+      transform: translateY(-1px);
+    }
+    .stat-card:active { cursor: grabbing; }
+
+    .stat-card-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .stat-card-label .icon {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      letter-spacing: 1px;
+      line-height: 1.1;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .stat-card-value .unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+    }
+
+    /* ── Variants ── 實心狀態色 (用設計系統的 on-fill 當底色 + 白字) */
+    .stat-card.warn {
+      background: #c43030;  /* far-exceed-on-fill light */
+      border-color: transparent;
+    }
+    .stat-card.success {
+      background: #0eab72;  /* success-on-fill light */
+      border-color: transparent;
+    }
+    .stat-card.exceed {
+      background: #e08600;  /* exceed-on-fill light */
+      border-color: transparent;
+    }
+    .stat-card.warn,
+    .stat-card.success,
+    .stat-card.exceed {
+      color: #ffffff;
+    }
+    .stat-card.warn .stat-card-value,
+    .stat-card.success .stat-card-value,
+    .stat-card.exceed .stat-card-value,
+    .stat-card.warn .stat-card-label,
+    .stat-card.success .stat-card-label,
+    .stat-card.exceed .stat-card-label {
+      color: #ffffff;
+      opacity: 1;
+    }
+    .stat-card.warn:hover,
+    .stat-card.success:hover,
+    .stat-card.exceed:hover {
+      border-color: rgba(255,255,255,0.6);
+    }
+
+    /* 斷線 — 中性灰 */
+    .stat-card.offline {
+      background: var(--color-fill-panel);
+      border-color: var(--color-outlines);
+      opacity: 0.85;
+    }
+    .stat-card.offline .stat-card-value,
+    .stat-card.offline .stat-card-label {
+      color: var(--color-text-secondary);
+    }
+
+    /* ── Header card (project info) ── */
+    .header-card { padding: 16px; }
+    .header-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .header-card-logo {
+      width: 40px; height: 40px;
+      background: var(--color-brand-fill);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .header-card-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+    }
+    .header-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      padding-top: 12px;
+      border-top: 1px solid var(--color-outlines);
+    }
+    .header-card-meta strong {
+      color: var(--color-text-main);
+      font-weight: 700;
+    }
+    .header-card-meta .meta-item {
+      display: flex; gap: 6px; align-items: center;
+    }
+
+    /* ── Weather card ── */
+    .weather-card { padding: 16px; }
+    .weather-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .weather-time {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+    .weather-time strong {
+      color: var(--color-text-main);
+      font-weight: 700;
+    }
+    .weather-location { font-size: 12px; color: var(--color-text-secondary); }
+    .weather-body {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 0;
+      border-top: 1px solid var(--color-outlines);
+    }
+    .weather-icon { font-size: 56px; line-height: 1; }
+    .weather-temp {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+    .weather-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+    .weather-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-outlines);
+    }
+    .weather-stat { text-align: center; }
+    .weather-stat-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .weather-stat-value { font-size: 16px; font-weight: 700; color: var(--color-text-main); }
+
+    /* ── Event list ── */
+    .event-list {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-outlines);
+      border-radius: 8px;
+      cursor: grab;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .event-row:hover {
+      border-color: var(--color-brand-content);
+      transform: translateX(2px);
+    }
+    .event-row:active { cursor: grabbing; }
+    .event-thumb {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #444, #2a2a2a);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .event-body { flex: 1; min-width: 0; }
+    .event-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .event-meta {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+    .event-row.is-latest .event-title { color: var(--color-far-exceed-on-fill); }
+
+    /* ── Sortable ghost styles ── */
+    .sortable-ghost {
+      opacity: 0.3;
+      background: var(--color-brand-fill-activated);
+    }
+    .sortable-chosen { z-index: 10; }
+    .sortable-drag { box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+
+    /* ── Footer ── */
+    .footer {
+      max-width: 1840px;
+      margin: 32px auto 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--color-text-placeholder);
+      padding: 16px;
+    }
+
+    /* Responsive ─ when narrow, columns collapse */
+    @media (max-width: 1200px) {
+      .dashboard { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 800px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .card-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-title"><span>儀錶板</span>　·　文字試調（可拖曳版）</div>
+  <div class="theme-toggle">
+    <button class="theme-btn" onclick="setTheme('light', this)">☀ Light</button>
+    <button class="theme-btn active" onclick="setTheme('dark', this)">◑ Dark</button>
+  </div>
+</div>
+
+<div class="dashboard">
+
+  <!-- ═══════ Column 1 ═══════ -->
+  <div class="column" data-col="col1">
+
+    <!-- Header / Project Info -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🏗</span>專案資訊
+        </div>
+      </div>
+      <div class="header-card">
+        <div class="header-card-title">
+          <div class="header-card-logo">🚇</div>
+          <div class="header-card-name">萬大-中和-樹林線 (第一期工程)<br/>CQ860區段標工程</div>
+        </div>
+        <div class="header-card-meta">
+          <div class="meta-item">📍 <strong>萬大線中和施工處</strong></div>
+          <div class="meta-item">👤 負責人 <strong>傅潘達</strong></div>
+          <div class="meta-item">📞 <strong>0227922988</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 容留管制 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">👥</span>容留管制
+        </div>
+      </div>
+      <div class="card-grid cols-4 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">進入 <span class="icon">→</span></div>
+          <div class="stat-card-value">205<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">場內人數 <span class="icon">👤</span></div>
+          <div class="stat-card-value">195<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">場內訪客 <span class="icon">👥</span></div>
+          <div class="stat-card-value">10<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">離開 <span class="icon">←</span></div>
+          <div class="stat-card-value">30<span class="unit">人</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 人員資格逾期 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">⚠️</span>人員資格逾期
+        </div>
+      </div>
+      <div class="card-grid cols-4 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">進入 <span class="icon">→</span></div>
+          <div class="stat-card-value">205<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">場內人數 <span class="icon">👤</span></div>
+          <div class="stat-card-value">195<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">場內訪客 <span class="icon">👥</span></div>
+          <div class="stat-card-value">10<span class="unit">人</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">離開 <span class="icon">←</span></div>
+          <div class="stat-card-value">30<span class="unit">人</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 環境數據監測 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🌡</span>環境數據監測
+        </div>
+      </div>
+      <div class="card-grid cols-3 sortable-cards">
+        <div class="stat-card warn">
+          <div class="stat-card-label">36 °C <span class="icon">✗</span></div>
+          <div class="stat-card-value">溫度</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-card-label">68.6 %RH <span class="icon">✓</span></div>
+          <div class="stat-card-value">濕度</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-card-label">66.6 dB <span class="icon">✓</span></div>
+          <div class="stat-card-value">噪音</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-card-label">27.2 <span class="icon">✓</span></div>
+          <div class="stat-card-value">熱指數</div>
+        </div>
+        <div class="stat-card offline">
+          <div class="stat-card-label">-- μg/m³</div>
+          <div class="stat-card-value">PM2.5</div>
+        </div>
+        <div class="stat-card exceed">
+          <div class="stat-card-label">7 μg/m³ <span class="icon">!</span></div>
+          <div class="stat-card-value">PM10</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════ Column 2 ═══════ -->
+  <div class="column" data-col="col2">
+
+    <!-- 機具進場 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🚛</span>機具進場
+        </div>
+      </div>
+      <div class="card-grid cols-3 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">機具進場 <span class="icon">🚚</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">本日預計進場 <span class="icon">📅</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">本月預計進場 <span class="icon">🗓</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 作業檢查 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🔍</span>作業檢查
+        </div>
+      </div>
+      <div class="card-grid cols-3 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">場內機具 <span class="icon">🚜</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">通過檢查 <span class="icon">✓</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">未通過檢查 <span class="icon">✗</span></div>
+          <div class="stat-card-value">0<span class="unit">輛</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 機具資格逾期與申請 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">📋</span>機具資格逾期與申請
+        </div>
+      </div>
+      <div class="card-grid cols-4 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">合格證 <span class="icon">📜</span></div>
+          <div class="stat-card-value">0</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-card-label">操作手 <span class="icon">⚠</span></div>
+          <div class="stat-card-value">2</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">吊掛手 <span class="icon">🪝</span></div>
+          <div class="stat-card-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">進場申請 <span class="icon">📝</span></div>
+          <div class="stat-card-value">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 閘道資訊 #1 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🛂</span>閘道資訊
+        </div>
+      </div>
+      <div class="card-grid cols-3 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">設備數量 <span class="icon">📡</span></div>
+          <div class="stat-card-value">6</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-card-label">設備異常 <span class="icon">⚠</span></div>
+          <div class="stat-card-value">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">設備斷線 <span class="icon">📵</span></div>
+          <div class="stat-card-value">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 閘道資訊 #2 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🛂</span>閘道資訊
+        </div>
+      </div>
+      <div class="card-grid cols-3 sortable-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">設備數量 <span class="icon">📡</span></div>
+          <div class="stat-card-value">6</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-card-label">設備異常 <span class="icon">⚠</span></div>
+          <div class="stat-card-value">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">設備斷線 <span class="icon">📵</span></div>
+          <div class="stat-card-value">0</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════ Column 3 ═══════ -->
+  <div class="column" data-col="col3">
+
+    <!-- 天氣 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">🌤</span>天氣
+        </div>
+      </div>
+      <div class="weather-card">
+        <div class="weather-top">
+          <div class="weather-time">2024/08/02 星期二 <strong>17:59</strong></div>
+          <div class="weather-location">新北市中和區</div>
+        </div>
+        <div class="weather-body">
+          <div class="weather-icon">🌤</div>
+          <div>
+            <div class="weather-temp">26°C</div>
+            <div class="weather-desc">晴時多雲</div>
+          </div>
+        </div>
+        <div class="weather-stats">
+          <div class="weather-stat">
+            <div class="weather-stat-label">紫外線</div>
+            <div class="weather-stat-value">2</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">風速</div>
+            <div class="weather-stat-value">2</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">濕度</div>
+            <div class="weather-stat-value">30%</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">降雨機率</div>
+            <div class="weather-stat-value">20%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 事件列表 -->
+    <section class="section">
+      <div class="section-header">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="section-title">
+          <span class="section-title-icon">📹</span>事件列表
+        </div>
+      </div>
+      <div class="event-list sortable-cards">
+        <div class="event-row is-latest">
+          <div class="event-thumb">❓</div>
+          <div class="event-body">
+            <div class="event-title">越界</div>
+            <div class="event-meta">頻道 nn  ·  YYYY/MM/DD hh:mm:ss</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">👷</div>
+          <div class="event-body">
+            <div class="event-title">安全帽</div>
+            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">🚧</div>
+          <div class="event-body">
+            <div class="event-title">電子圍籬</div>
+            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">❓</div>
+          <div class="event-body">
+            <div class="event-title">越界</div>
+            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">❓</div>
+          <div class="event-body">
+            <div class="event-title">越界</div>
+            <div class="event-meta">頻道 99  ·  YYYY/MM/DD hh:mm:ss</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">👷</div>
+          <div class="event-body">
+            <div class="event-title">安全帽</div>
+            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">🚧</div>
+          <div class="event-body">
+            <div class="event-title">電子圍籬</div>
+            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
+          </div>
+        </div>
+        <div class="event-row">
+          <div class="event-thumb">❓</div>
+          <div class="event-body">
+            <div class="event-title">越界</div>
+            <div class="event-meta">頻道 nn  ·  YYYY/MM/DD hh:mm:ss</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="footer">HiSharp © 2024 昇銳電子 · 版權所有　·　拖曳區塊標頭可移動 section；卡片本身可在區塊內重排</div>
+
+<script>
+  /* ── Theme toggle ── */
+  function setTheme(theme, btn) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ── SortableJS init ── */
+
+  // 1) Sections — draggable between columns
+  document.querySelectorAll('.column').forEach(col => {
+    new Sortable(col, {
+      group: 'sections',
+      handle: '.section-header',
+      animation: 200,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      dragClass: 'sortable-drag',
+      onStart: e => e.item.classList.add('is-dragging'),
+      onEnd: e => e.item.classList.remove('is-dragging'),
+    });
+  });
+
+  // 2) Stat cards / event rows — draggable within their card-grid
+  document.querySelectorAll('.sortable-cards').forEach(grid => {
+    new Sortable(grid, {
+      group: 'cards-' + grid.closest('.section')?.querySelector('.section-title')?.textContent.trim().slice(0,6),
+      animation: 200,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      dragClass: 'sortable-drag',
+    });
+  });
+</script>
+
+</body>
+</html>
