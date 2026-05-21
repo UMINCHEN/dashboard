@@ -16,58 +16,50 @@
       font-family: var(--font-family);
       background: var(--color-bg);
       color: var(--color-text-main);
-      min-height: 100vh;
-      padding: 24px;
+      height: 100vh;
+      overflow: hidden;
+      padding: 14px 18px;
+      position: relative;
     }
 
-    /* ── Mode toggle ── */
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1840px;
-      margin: 0 auto 16px;
-      padding: 8px 4px;
-    }
-    .toolbar-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      letter-spacing: 1px;
-    }
-    .toolbar-title span { color: var(--color-brand-content); }
+    /* ── Compact floating theme toggle ── */
     .theme-toggle {
-      display: flex; gap: 2px;
+      position: absolute;
+      top: 14px; right: 18px;
+      display: flex; gap: 1px;
       background: var(--color-fill-accent);
       border: 1px solid var(--color-outlines);
-      border-radius: 24px; padding: 3px;
+      border-radius: 20px; padding: 2px;
+      z-index: 10;
     }
     .theme-btn {
-      padding: 5px 14px; border-radius: 20px;
-      font-size: 12px; font-family: var(--font-family); font-weight: 500;
+      padding: 3px 9px; border-radius: 16px;
+      font-size: 11px; font-family: var(--font-family); font-weight: 500;
       border: none; cursor: pointer; color: var(--color-text-secondary);
       background: transparent; transition: all 0.15s;
+      line-height: 1.3;
     }
     .theme-btn.active {
       background: var(--color-fill-components);
       color: var(--color-text-main);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
     }
 
-    /* ── Dashboard 3-column grid ── */
+    /* ── Dashboard 3-column grid (fills viewport height) ── */
     .dashboard {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
-      max-width: 1840px;
-      margin: 0 auto;
+      gap: 12px;
+      height: 100%;
+      max-height: 100%;
     }
 
     .column {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      min-height: 100px;
+      gap: 8px;
+      min-height: 0;
+      overflow: hidden;
     }
 
     /* ── Section card ── */
@@ -85,30 +77,32 @@
       box-shadow: 0 6px 24px rgba(0,0,0,0.3);
     }
 
+    .section { display: flex; flex-direction: column; min-height: 0; }
     .section-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
+      gap: 8px;
+      padding: 8px 14px;
       cursor: grab;
       user-select: none;
       border-bottom: 1px solid var(--color-outlines);
       background: var(--color-surface);
+      flex-shrink: 0;
     }
     .section-header:active { cursor: grabbing; }
 
     .drag-handle {
       color: var(--color-text-placeholder);
-      font-size: 14px;
+      font-size: 13px;
       letter-spacing: -2px;
       line-height: 1;
     }
 
     .section-title {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--color-text-main);
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       flex: 1;
     }
     .section-title-icon {
@@ -119,19 +113,18 @@
     /* ── Card grids ── */
     .card-grid {
       display: grid;
-      gap: 8px;
-      padding: 12px;
+      gap: 6px;
+      padding: 8px;
     }
     .card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
     .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-    .card-grid.cols-6 { grid-template-columns: repeat(3, 1fr); }
 
     /* ── Stat card ── */
     .stat-card {
       background: var(--color-surface);
       border: 1px solid var(--color-outlines);
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 8px 10px;
       cursor: grab;
       transition: transform 0.1s, border-color 0.15s;
       user-select: none;
@@ -143,33 +136,37 @@
     .stat-card:active { cursor: grabbing; }
 
     .stat-card-label {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--color-text-secondary);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .stat-card-label .icon {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.7;
     }
     .stat-card-value {
-      font-size: 28px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--color-text-main);
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       line-height: 1.1;
       display: flex;
       align-items: baseline;
       gap: 4px;
     }
     .stat-card-value .unit {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 400;
       color: var(--color-text-secondary);
     }
+
+    /* 環境數據監測：文字更小（值在上 + 名稱在下） */
+    .env-card .stat-card-value { font-size: 18px; letter-spacing: 0.3px; }
+    .env-card .stat-card-label { font-size: 11px; }
 
     /* ── Variants ── 實心狀態色 (用設計系統的 on-fill 當底色 + 白字) */
     .stat-card.warn {
@@ -216,35 +213,36 @@
     }
 
     /* ── Header card (project info) ── */
-    .header-card { padding: 16px; }
+    .header-card { padding: 10px 12px; }
     .header-card-title {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 8px;
     }
     .header-card-logo {
-      width: 40px; height: 40px;
+      width: 32px; height: 32px;
       background: var(--color-brand-fill);
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
+      flex-shrink: 0;
     }
     .header-card-name {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--color-text-main);
-      letter-spacing: 0.5px;
-      line-height: 1.3;
+      letter-spacing: 0.3px;
+      line-height: 1.25;
     }
     .header-card-meta {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--color-text-secondary);
-      padding-top: 12px;
+      padding-top: 8px;
       border-top: 1px solid var(--color-outlines);
     }
     .header-card-meta strong {
@@ -252,68 +250,71 @@
       font-weight: 700;
     }
     .header-card-meta .meta-item {
-      display: flex; gap: 6px; align-items: center;
+      display: flex; gap: 4px; align-items: center;
     }
 
     /* ── Weather card ── */
-    .weather-card { padding: 16px; }
+    .weather-card { padding: 10px 12px; }
     .weather-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .weather-time {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--color-text-secondary);
     }
     .weather-time strong {
       color: var(--color-text-main);
       font-weight: 700;
     }
-    .weather-location { font-size: 12px; color: var(--color-text-secondary); }
+    .weather-location { font-size: 11px; color: var(--color-text-secondary); }
     .weather-body {
       display: flex;
       align-items: center;
-      gap: 18px;
-      padding: 12px 0;
+      gap: 14px;
+      padding: 8px 0;
       border-top: 1px solid var(--color-outlines);
     }
-    .weather-icon { font-size: 56px; line-height: 1; }
+    .weather-icon { font-size: 40px; line-height: 1; }
     .weather-temp {
-      font-size: 32px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--color-text-main);
     }
-    .weather-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+    .weather-desc { font-size: 11px; color: var(--color-text-secondary); margin-top: 1px; }
     .weather-stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding-top: 12px;
+      gap: 6px;
+      padding-top: 8px;
       border-top: 1px solid var(--color-outlines);
     }
     .weather-stat { text-align: center; }
-    .weather-stat-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
-    .weather-stat-value { font-size: 16px; font-weight: 700; color: var(--color-text-main); }
+    .weather-stat-label { font-size: 10px; color: var(--color-text-secondary); margin-bottom: 2px; }
+    .weather-stat-value { font-size: 14px; font-weight: 700; color: var(--color-text-main); }
 
     /* ── Event list ── */
     .event-list {
-      padding: 8px;
+      padding: 6px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
+      min-height: 0;
+      overflow: hidden;
     }
     .event-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px;
+      gap: 10px;
+      padding: 6px 8px;
       background: var(--color-surface);
       border: 1px solid var(--color-outlines);
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: grab;
       transition: border-color 0.15s, transform 0.1s;
+      flex-shrink: 0;
     }
     .event-row:hover {
       border-color: var(--color-brand-content);
@@ -321,25 +322,25 @@
     }
     .event-row:active { cursor: grabbing; }
     .event-thumb {
-      width: 48px; height: 48px;
+      width: 32px; height: 32px;
       background: linear-gradient(135deg, #444, #2a2a2a);
-      border-radius: 6px;
+      border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
+      font-size: 16px;
       flex-shrink: 0;
     }
     .event-body { flex: 1; min-width: 0; }
     .event-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--color-text-main);
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 6px;
     }
     .event-meta {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--color-text-secondary);
-      margin-top: 2px;
-      letter-spacing: 0.5px;
+      margin-top: 1px;
+      letter-spacing: 0.3px;
     }
     .event-row.is-latest .event-title { color: var(--color-far-exceed-on-fill); }
 
@@ -351,19 +352,10 @@
     .sortable-chosen { z-index: 10; }
     .sortable-drag { box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
 
-    /* ── Footer ── */
-    .footer {
-      max-width: 1840px;
-      margin: 32px auto 0;
-      text-align: center;
-      font-size: 11px;
-      color: var(--color-text-placeholder);
-      padding: 16px;
-    }
-
-    /* Responsive ─ when narrow, columns collapse */
+    /* Responsive ─ when narrow, allow scroll */
     @media (max-width: 1200px) {
-      .dashboard { grid-template-columns: 1fr 1fr; }
+      body { height: auto; overflow: auto; }
+      .dashboard { grid-template-columns: 1fr 1fr; height: auto; }
     }
     @media (max-width: 800px) {
       .dashboard { grid-template-columns: 1fr; }
@@ -373,12 +365,9 @@
 </head>
 <body>
 
-<div class="toolbar">
-  <div class="toolbar-title"><span>儀錶板</span>　·　文字試調（可拖曳版）</div>
-  <div class="theme-toggle">
-    <button class="theme-btn" onclick="setTheme('light', this)">☀ Light</button>
-    <button class="theme-btn active" onclick="setTheme('dark', this)">◑ Dark</button>
-  </div>
+<div class="theme-toggle">
+  <button class="theme-btn" onclick="setTheme('light', this)">☀</button>
+  <button class="theme-btn active" onclick="setTheme('dark', this)">◑</button>
 </div>
 
 <div class="dashboard">
@@ -472,27 +461,27 @@
         </div>
       </div>
       <div class="card-grid cols-3 sortable-cards">
-        <div class="stat-card warn">
+        <div class="stat-card warn env-card">
           <div class="stat-card-label">36 °C <span class="icon">✗</span></div>
           <div class="stat-card-value">溫度</div>
         </div>
-        <div class="stat-card success">
+        <div class="stat-card success env-card">
           <div class="stat-card-label">68.6 %RH <span class="icon">✓</span></div>
           <div class="stat-card-value">濕度</div>
         </div>
-        <div class="stat-card success">
+        <div class="stat-card success env-card">
           <div class="stat-card-label">66.6 dB <span class="icon">✓</span></div>
           <div class="stat-card-value">噪音</div>
         </div>
-        <div class="stat-card success">
+        <div class="stat-card success env-card">
           <div class="stat-card-label">27.2 <span class="icon">✓</span></div>
           <div class="stat-card-value">熱指數</div>
         </div>
-        <div class="stat-card offline">
+        <div class="stat-card offline env-card">
           <div class="stat-card-label">-- μg/m³</div>
           <div class="stat-card-value">PM2.5</div>
         </div>
-        <div class="stat-card exceed">
+        <div class="stat-card exceed env-card">
           <div class="stat-card-label">7 μg/m³ <span class="icon">!</span></div>
           <div class="stat-card-value">PM10</div>
         </div>
@@ -581,30 +570,6 @@
     </section>
 
     <!-- 閘道資訊 #1 -->
-    <section class="section">
-      <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🛂</span>閘道資訊
-        </div>
-      </div>
-      <div class="card-grid cols-3 sortable-cards">
-        <div class="stat-card">
-          <div class="stat-card-label">設備數量 <span class="icon">📡</span></div>
-          <div class="stat-card-value">6</div>
-        </div>
-        <div class="stat-card warn">
-          <div class="stat-card-label">設備異常 <span class="icon">⚠</span></div>
-          <div class="stat-card-value">1</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">設備斷線 <span class="icon">📵</span></div>
-          <div class="stat-card-value">0</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 閘道資訊 #2 -->
     <section class="section">
       <div class="section-header">
         <span class="drag-handle">⋮⋮</span>
@@ -718,34 +683,11 @@
             <div class="event-meta">頻道 99  ·  YYYY/MM/DD hh:mm:ss</div>
           </div>
         </div>
-        <div class="event-row">
-          <div class="event-thumb">👷</div>
-          <div class="event-body">
-            <div class="event-title">安全帽</div>
-            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
-          </div>
-        </div>
-        <div class="event-row">
-          <div class="event-thumb">🚧</div>
-          <div class="event-body">
-            <div class="event-title">電子圍籬</div>
-            <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
-          </div>
-        </div>
-        <div class="event-row">
-          <div class="event-thumb">❓</div>
-          <div class="event-body">
-            <div class="event-title">越界</div>
-            <div class="event-meta">頻道 nn  ·  YYYY/MM/DD hh:mm:ss</div>
-          </div>
-        </div>
       </div>
     </section>
 
   </div>
 </div>
-
-<div class="footer">HiSharp © 2024 昇銳電子 · 版權所有　·　拖曳區塊標頭可移動 section；卡片本身可在區塊內重排</div>
 
 <script>
   /* ── Theme toggle ── */
