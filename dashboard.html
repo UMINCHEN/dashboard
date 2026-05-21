@@ -7,22 +7,35 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── 所有 emoji / icon 灰階化 ── */
-    .section-title-icon,
-    .header-card-logo,
-    .weather-icon,
-    .event-thumb,
-    .stat-card-label .icon,
-    .meta-item,
-    .theme-btn,
-    .drag-handle {
-      filter: grayscale(1);
+    /* ── Material Symbols base ── */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+      color: inherit;
     }
+    /* size variants */
+    .mi-xs { font-size: 14px; }
+    .mi-sm { font-size: 18px; }
+    .mi-md { font-size: 22px; }
+    .mi-lg { font-size: 28px; }
+    .mi-xl { font-size: 48px; }
 
     body {
       font-family: var(--font-family);
@@ -45,12 +58,13 @@
       z-index: 10;
     }
     .theme-btn {
-      padding: 3px 9px; border-radius: 16px;
-      font-size: 11px; font-family: var(--font-family); font-weight: 500;
+      padding: 4px 8px; border-radius: 16px;
+      font-family: var(--font-family); font-weight: 500;
       border: none; cursor: pointer; color: var(--color-text-secondary);
       background: transparent; transition: all 0.15s;
-      line-height: 1.3;
+      line-height: 1; display: flex; align-items: center;
     }
+    .theme-btn .material-symbols-outlined { font-size: 16px; }
     .theme-btn.active {
       background: var(--color-fill-components);
       color: var(--color-text-main);
@@ -81,15 +95,13 @@
       border-radius: 12px;
       overflow: hidden;
       transition: box-shadow 0.15s, transform 0.15s;
+      display: flex; flex-direction: column; min-height: 0;
     }
-    .section.is-dragging {
-      opacity: 0.4;
-    }
+    .section.is-dragging { opacity: 0.4; }
     .section:not(.is-dragging):hover {
       box-shadow: 0 6px 24px rgba(0,0,0,0.3);
     }
 
-    .section { display: flex; flex-direction: column; min-height: 0; }
     .section-header {
       display: flex;
       align-items: center;
@@ -105,10 +117,9 @@
 
     .drag-handle {
       color: var(--color-text-placeholder);
-      font-size: 13px;
-      letter-spacing: -2px;
-      line-height: 1;
+      display: flex; align-items: center;
     }
+    .drag-handle .material-symbols-outlined { font-size: 18px; }
 
     .section-title {
       font-size: 14px;
@@ -116,10 +127,6 @@
       color: var(--color-text-main);
       letter-spacing: 0.8px;
       flex: 1;
-    }
-    .section-title-icon {
-      color: var(--color-brand-content);
-      margin-right: 4px;
     }
 
     /* ── Card grids ── */
@@ -157,9 +164,10 @@
       margin-bottom: 4px;
     }
     .stat-card-label .icon {
-      font-size: 12px;
+      display: inline-flex;
       opacity: 0.7;
     }
+    .stat-card-label .icon .material-symbols-outlined { font-size: 16px; }
     .stat-card-value {
       font-size: 22px;
       font-weight: 700;
@@ -176,28 +184,17 @@
       color: var(--color-text-secondary);
     }
 
-    /* 環境數據監測：文字更小（值在上 + 名稱在下） */
+    /* 環境數據監測：文字更小 */
     .env-card .stat-card-value { font-size: 18px; letter-spacing: 0.3px; }
     .env-card .stat-card-label { font-size: 11px; }
 
-    /* ── Variants ── 實心狀態色 (用設計系統的 on-fill 當底色 + 白字) */
-    .stat-card.warn {
-      background: #c43030;  /* far-exceed-on-fill light */
-      border-color: transparent;
-    }
-    .stat-card.success {
-      background: #0eab72;  /* success-on-fill light */
-      border-color: transparent;
-    }
-    .stat-card.exceed {
-      background: #e08600;  /* exceed-on-fill light */
-      border-color: transparent;
-    }
+    /* ── Variants ── 實心狀態色 */
+    .stat-card.warn    { background: #c43030; border-color: transparent; }
+    .stat-card.success { background: #0eab72; border-color: transparent; }
+    .stat-card.exceed  { background: #e08600; border-color: transparent; }
     .stat-card.warn,
     .stat-card.success,
-    .stat-card.exceed {
-      color: #ffffff;
-    }
+    .stat-card.exceed { color: #ffffff; }
     .stat-card.warn .stat-card-value,
     .stat-card.success .stat-card-value,
     .stat-card.exceed .stat-card-value,
@@ -213,7 +210,7 @@
       border-color: rgba(255,255,255,0.6);
     }
 
-    /* 斷線 — 中性灰 */
+    /* 斷線 */
     .stat-card.offline {
       background: var(--color-fill-panel);
       border-color: var(--color-outlines);
@@ -233,13 +230,13 @@
       margin-bottom: 8px;
     }
     .header-card-logo {
-      width: 32px; height: 32px;
-      background: var(--color-brand-fill);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand-content);
       flex-shrink: 0;
     }
+    .header-card-logo .material-symbols-outlined { font-size: 28px; }
     .header-card-name {
       font-size: 14px;
       font-weight: 700;
@@ -264,6 +261,7 @@
     .header-card-meta .meta-item {
       display: flex; gap: 4px; align-items: center;
     }
+    .header-card-meta .meta-item .material-symbols-outlined { font-size: 14px; color: var(--color-text-secondary); }
 
     /* ── Weather card ── */
     .weather-card { padding: 10px 12px; }
@@ -289,7 +287,11 @@
       padding: 8px 0;
       border-top: 1px solid var(--color-outlines);
     }
-    .weather-icon { font-size: 40px; line-height: 1; }
+    .weather-icon {
+      color: var(--color-brand-content);
+      display: flex; align-items: center;
+    }
+    .weather-icon .material-symbols-outlined { font-size: 48px; }
     .weather-temp {
       font-size: 26px;
       font-weight: 700;
@@ -300,12 +302,12 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      padding-top: 8px;
+      padding-top: 10px;
       border-top: 1px solid var(--color-outlines);
     }
     .weather-stat { text-align: center; }
-    .weather-stat-label { font-size: 10px; color: var(--color-text-secondary); margin-bottom: 2px; }
-    .weather-stat-value { font-size: 14px; font-weight: 700; color: var(--color-text-main); }
+    .weather-stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .weather-stat-value { font-size: 22px; font-weight: 700; color: var(--color-text-main); letter-spacing: 0.3px; }
 
     /* ── Event list ── */
     .event-list {
@@ -320,7 +322,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 6px 8px;
+      padding: 6px 10px;
       background: var(--color-surface);
       border: 1px solid var(--color-outlines);
       border-radius: 6px;
@@ -334,13 +336,13 @@
     }
     .event-row:active { cursor: grabbing; }
     .event-thumb {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, #444, #2a2a2a);
-      border-radius: 4px;
+      width: 28px; height: 28px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
+      color: var(--color-text-secondary);
       flex-shrink: 0;
     }
+    .event-thumb .material-symbols-outlined { font-size: 24px; }
+    .event-row.is-latest .event-thumb { color: var(--color-far-exceed-on-fill); }
     .event-body { flex: 1; min-width: 0; }
     .event-title {
       font-size: 12px;
@@ -357,14 +359,11 @@
     .event-row.is-latest .event-title { color: var(--color-far-exceed-on-fill); }
 
     /* ── Sortable ghost styles ── */
-    .sortable-ghost {
-      opacity: 0.3;
-      background: var(--color-brand-fill-activated);
-    }
+    .sortable-ghost { opacity: 0.3; background: var(--color-brand-fill-activated); }
     .sortable-chosen { z-index: 10; }
     .sortable-drag { box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
 
-    /* Responsive ─ when narrow, allow scroll */
+    /* Responsive */
     @media (max-width: 1200px) {
       body { height: auto; overflow: auto; }
       .dashboard { grid-template-columns: 1fr 1fr; height: auto; }
@@ -378,8 +377,8 @@
 <body>
 
 <div class="theme-toggle">
-  <button class="theme-btn" onclick="setTheme('light', this)">☀</button>
-  <button class="theme-btn active" onclick="setTheme('dark', this)">◑</button>
+  <button class="theme-btn" onclick="setTheme('light', this)"><span class="material-symbols-outlined">light_mode</span></button>
+  <button class="theme-btn active" onclick="setTheme('dark', this)"><span class="material-symbols-outlined">dark_mode</span></button>
 </div>
 
 <div class="dashboard">
@@ -390,20 +389,18 @@
     <!-- Header / Project Info -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🏗</span>專案資訊
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">專案資訊</div>
       </div>
       <div class="header-card">
         <div class="header-card-title">
-          <div class="header-card-logo">🚇</div>
+          <div class="header-card-logo"><span class="material-symbols-outlined">train</span></div>
           <div class="header-card-name">示範捷運線 (Demo 第一期工程)<br/>DEMO-001 區段標工程</div>
         </div>
         <div class="header-card-meta">
-          <div class="meta-item">📍 <strong>示範線測試施工處</strong></div>
-          <div class="meta-item">👤 負責人 <strong>王大明</strong></div>
-          <div class="meta-item">📞 <strong>02-1234-5678</strong></div>
+          <div class="meta-item"><span class="material-symbols-outlined">location_on</span><strong>示範線測試施工處</strong></div>
+          <div class="meta-item"><span class="material-symbols-outlined">person</span>負責人 <strong>王大明</strong></div>
+          <div class="meta-item"><span class="material-symbols-outlined">call</span><strong>02-1234-5678</strong></div>
         </div>
       </div>
     </section>
@@ -411,26 +408,24 @@
     <!-- 容留管制 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">👥</span>容留管制
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">容留管制</div>
       </div>
       <div class="card-grid cols-4 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">進入 <span class="icon">→</span></div>
+          <div class="stat-card-label">進入 <span class="icon"><span class="material-symbols-outlined">login</span></span></div>
           <div class="stat-card-value">205<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">場內人數 <span class="icon">👤</span></div>
+          <div class="stat-card-label">場內人數 <span class="icon"><span class="material-symbols-outlined">person</span></span></div>
           <div class="stat-card-value">195<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">場內訪客 <span class="icon">👥</span></div>
+          <div class="stat-card-label">場內訪客 <span class="icon"><span class="material-symbols-outlined">group</span></span></div>
           <div class="stat-card-value">10<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">離開 <span class="icon">←</span></div>
+          <div class="stat-card-label">離開 <span class="icon"><span class="material-symbols-outlined">logout</span></span></div>
           <div class="stat-card-value">30<span class="unit">人</span></div>
         </div>
       </div>
@@ -439,26 +434,24 @@
     <!-- 人員資格逾期 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">⚠️</span>人員資格逾期
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">人員資格逾期</div>
       </div>
       <div class="card-grid cols-4 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">進入 <span class="icon">→</span></div>
+          <div class="stat-card-label">進入 <span class="icon"><span class="material-symbols-outlined">login</span></span></div>
           <div class="stat-card-value">205<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">場內人數 <span class="icon">👤</span></div>
+          <div class="stat-card-label">場內人數 <span class="icon"><span class="material-symbols-outlined">person</span></span></div>
           <div class="stat-card-value">195<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">場內訪客 <span class="icon">👥</span></div>
+          <div class="stat-card-label">場內訪客 <span class="icon"><span class="material-symbols-outlined">group</span></span></div>
           <div class="stat-card-value">10<span class="unit">人</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">離開 <span class="icon">←</span></div>
+          <div class="stat-card-label">離開 <span class="icon"><span class="material-symbols-outlined">logout</span></span></div>
           <div class="stat-card-value">30<span class="unit">人</span></div>
         </div>
       </div>
@@ -467,26 +460,24 @@
     <!-- 環境數據監測 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🌡</span>環境數據監測
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">環境數據監測</div>
       </div>
       <div class="card-grid cols-3 sortable-cards">
         <div class="stat-card warn env-card">
-          <div class="stat-card-label">36 °C <span class="icon">✗</span></div>
+          <div class="stat-card-label">36 °C <span class="icon"><span class="material-symbols-outlined">cancel</span></span></div>
           <div class="stat-card-value">溫度</div>
         </div>
         <div class="stat-card success env-card">
-          <div class="stat-card-label">68.6 %RH <span class="icon">✓</span></div>
+          <div class="stat-card-label">68.6 %RH <span class="icon"><span class="material-symbols-outlined">check_circle</span></span></div>
           <div class="stat-card-value">濕度</div>
         </div>
         <div class="stat-card success env-card">
-          <div class="stat-card-label">66.6 dB <span class="icon">✓</span></div>
+          <div class="stat-card-label">66.6 dB <span class="icon"><span class="material-symbols-outlined">check_circle</span></span></div>
           <div class="stat-card-value">噪音</div>
         </div>
         <div class="stat-card success env-card">
-          <div class="stat-card-label">27.2 <span class="icon">✓</span></div>
+          <div class="stat-card-label">27.2 <span class="icon"><span class="material-symbols-outlined">check_circle</span></span></div>
           <div class="stat-card-value">熱指數</div>
         </div>
         <div class="stat-card offline env-card">
@@ -494,7 +485,7 @@
           <div class="stat-card-value">PM2.5</div>
         </div>
         <div class="stat-card exceed env-card">
-          <div class="stat-card-label">7 μg/m³ <span class="icon">!</span></div>
+          <div class="stat-card-label">7 μg/m³ <span class="icon"><span class="material-symbols-outlined">priority_high</span></span></div>
           <div class="stat-card-value">PM10</div>
         </div>
       </div>
@@ -508,22 +499,20 @@
     <!-- 機具進場 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🚛</span>機具進場
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">機具進場</div>
       </div>
       <div class="card-grid cols-3 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">機具進場 <span class="icon">🚚</span></div>
+          <div class="stat-card-label">機具進場 <span class="icon"><span class="material-symbols-outlined">local_shipping</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">本日預計進場 <span class="icon">📅</span></div>
+          <div class="stat-card-label">本日預計進場 <span class="icon"><span class="material-symbols-outlined">today</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">本月預計進場 <span class="icon">🗓</span></div>
+          <div class="stat-card-label">本月預計進場 <span class="icon"><span class="material-symbols-outlined">calendar_month</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
       </div>
@@ -532,22 +521,20 @@
     <!-- 作業檢查 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🔍</span>作業檢查
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">作業檢查</div>
       </div>
       <div class="card-grid cols-3 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">場內機具 <span class="icon">🚜</span></div>
+          <div class="stat-card-label">場內機具 <span class="icon"><span class="material-symbols-outlined">agriculture</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">通過檢查 <span class="icon">✓</span></div>
+          <div class="stat-card-label">通過檢查 <span class="icon"><span class="material-symbols-outlined">check_circle</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">未通過檢查 <span class="icon">✗</span></div>
+          <div class="stat-card-label">未通過檢查 <span class="icon"><span class="material-symbols-outlined">cancel</span></span></div>
           <div class="stat-card-value">0<span class="unit">輛</span></div>
         </div>
       </div>
@@ -556,50 +543,46 @@
     <!-- 機具資格逾期與申請 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">📋</span>機具資格逾期與申請
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">機具資格逾期與申請</div>
       </div>
       <div class="card-grid cols-4 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">合格證 <span class="icon">📜</span></div>
+          <div class="stat-card-label">合格證 <span class="icon"><span class="material-symbols-outlined">verified</span></span></div>
           <div class="stat-card-value">0</div>
         </div>
         <div class="stat-card warn">
-          <div class="stat-card-label">操作手 <span class="icon">⚠</span></div>
+          <div class="stat-card-label">操作手 <span class="icon"><span class="material-symbols-outlined">warning</span></span></div>
           <div class="stat-card-value">2</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">吊掛手 <span class="icon">🪝</span></div>
+          <div class="stat-card-label">吊掛手 <span class="icon"><span class="material-symbols-outlined">precision_manufacturing</span></span></div>
           <div class="stat-card-value">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">進場申請 <span class="icon">📝</span></div>
+          <div class="stat-card-label">進場申請 <span class="icon"><span class="material-symbols-outlined">assignment</span></span></div>
           <div class="stat-card-value">0</div>
         </div>
       </div>
     </section>
 
-    <!-- 閘道資訊 #1 -->
+    <!-- 閘道資訊 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🛂</span>閘道資訊
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">閘道資訊</div>
       </div>
       <div class="card-grid cols-3 sortable-cards">
         <div class="stat-card">
-          <div class="stat-card-label">設備數量 <span class="icon">📡</span></div>
+          <div class="stat-card-label">設備數量 <span class="icon"><span class="material-symbols-outlined">router</span></span></div>
           <div class="stat-card-value">6</div>
         </div>
         <div class="stat-card warn">
-          <div class="stat-card-label">設備異常 <span class="icon">⚠</span></div>
+          <div class="stat-card-label">設備異常 <span class="icon"><span class="material-symbols-outlined">warning</span></span></div>
           <div class="stat-card-value">1</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">設備斷線 <span class="icon">📵</span></div>
+          <div class="stat-card-label">設備斷線 <span class="icon"><span class="material-symbols-outlined">signal_disconnected</span></span></div>
           <div class="stat-card-value">0</div>
         </div>
       </div>
@@ -613,10 +596,8 @@
     <!-- 天氣 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">🌤</span>天氣
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">天氣</div>
       </div>
       <div class="weather-card">
         <div class="weather-top">
@@ -624,7 +605,7 @@
           <div class="weather-location">新北市中和區</div>
         </div>
         <div class="weather-body">
-          <div class="weather-icon">🌤</div>
+          <div class="weather-icon"><span class="material-symbols-outlined">partly_cloudy_day</span></div>
           <div>
             <div class="weather-temp">26°C</div>
             <div class="weather-desc">晴時多雲</div>
@@ -654,42 +635,40 @@
     <!-- 事件列表 -->
     <section class="section">
       <div class="section-header">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="section-title">
-          <span class="section-title-icon">📹</span>事件列表
-        </div>
+        <span class="drag-handle"><span class="material-symbols-outlined">drag_indicator</span></span>
+        <div class="section-title">事件列表</div>
       </div>
       <div class="event-list sortable-cards">
         <div class="event-row is-latest">
-          <div class="event-thumb">❓</div>
+          <div class="event-thumb"><span class="material-symbols-outlined">crisis_alert</span></div>
           <div class="event-body">
             <div class="event-title">越界</div>
             <div class="event-meta">頻道 nn  ·  YYYY/MM/DD hh:mm:ss</div>
           </div>
         </div>
         <div class="event-row">
-          <div class="event-thumb">👷</div>
+          <div class="event-thumb"><span class="material-symbols-outlined">engineering</span></div>
           <div class="event-body">
             <div class="event-title">安全帽</div>
             <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
           </div>
         </div>
         <div class="event-row">
-          <div class="event-thumb">🚧</div>
+          <div class="event-thumb"><span class="material-symbols-outlined">fence</span></div>
           <div class="event-body">
             <div class="event-title">電子圍籬</div>
             <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
           </div>
         </div>
         <div class="event-row">
-          <div class="event-thumb">❓</div>
+          <div class="event-thumb"><span class="material-symbols-outlined">crisis_alert</span></div>
           <div class="event-body">
             <div class="event-title">越界</div>
             <div class="event-meta">頻道 99  ·  2025/02/21  01:01:30</div>
           </div>
         </div>
         <div class="event-row">
-          <div class="event-thumb">❓</div>
+          <div class="event-thumb"><span class="material-symbols-outlined">crisis_alert</span></div>
           <div class="event-body">
             <div class="event-title">越界</div>
             <div class="event-meta">頻道 99  ·  YYYY/MM/DD hh:mm:ss</div>
