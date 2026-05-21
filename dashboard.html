@@ -12,6 +12,18 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── 所有 emoji / icon 灰階化 ── */
+    .section-title-icon,
+    .header-card-logo,
+    .weather-icon,
+    .event-thumb,
+    .stat-card-label .icon,
+    .meta-item,
+    .theme-btn,
+    .drag-handle {
+      filter: grayscale(1);
+    }
+
     body {
       font-family: var(--font-family);
       background: var(--color-bg);
